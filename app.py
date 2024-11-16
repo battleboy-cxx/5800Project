@@ -141,4 +141,5 @@ with gr.Blocks() as demo:
         outputs=[result_text, selected_foods_display]
     )
 
-demo.launch()
+# 端口 80
+demo.launch(server_port=80)
