@@ -37,7 +37,7 @@ def maximize_nutritional_value_dp(values, gis, chos, prices, gl_limit, budget_li
                 j -= gls[i]
                 k -= prices[i]
 
-    print(dp)
+    # print(dp)
     # Return maximum nutritional value and selected item indices
     return max_value, selected_items[::-1]
 
@@ -160,7 +160,7 @@ with gr.Blocks() as demo:
         outputs=[result_text, selected_foods_display]
     )
 
-demo.launch(server_name="0.0.0.0", server_port=8080)
+demo.launch(server_name="0.0.0.0", server_port=80)
 
 
 
