@@ -15,22 +15,18 @@ def maximize_nutritional_value_dp(values, gis, chos, prices, gl_limit, budget_li
     dp = [[float('-inf')] * (budget_limit + 1) for _ in range(gl_limit_scaled + 1)]
     dp[0][0] = 0  # Base case
 
+    max_value = float('-inf')
+    final_j, final_k = 0, 0
     # Dynamic programming computation
     for i in range(n):
         for j in range(gl_limit_scaled, gls[i] - 1, -1):  # GL constraint
             for k in range(budget_limit, prices[i] - 1, -1):  # Budget constraint
                 if dp[j - gls[i]][k - prices[i]] != float('-inf'):
                     dp[j][k] = max(dp[j][k], dp[j - gls[i]][k - prices[i]] + values[i])
-
-    # Find the maximum nutritional value and its position
-    max_value = float('-inf')
-    final_j, final_k = 0, 0
-    for j in range(gl_limit_scaled + 1):
-        for k in range(budget_limit + 1):
-            if dp[j][k] > max_value:
-                max_value = dp[j][k]
-                final_j, final_k = j, k
-
+                    if dp[j][k] > max_value:
+                        max_value = dp[j][k]
+                        final_j, final_k = j, k
+    
     # Backtracking to find selected items
     selected_items = []
     j, k = final_j, final_k
@@ -41,6 +37,7 @@ def maximize_nutritional_value_dp(values, gis, chos, prices, gl_limit, budget_li
                 j -= gls[i]
                 k -= prices[i]
 
+    print(dp)
     # Return maximum nutritional value and selected item indices
     return max_value, selected_items[::-1]
 
@@ -79,11 +76,16 @@ def delete_food_items(food_data, items_to_delete):
 
 # Initial food data
 food_data = pd.DataFrame({
-    'Food Name': ["Apple", "Banana", "Carrot", "Pear"],
-    'Nutritional Value': [10, 20, 30, 40],
-    'GI Value': [50, 60, 40, 30],
-    'Carbohydrate Content': [15, 20, 10, 5],
-    'Price': [5, 10, 8, 7]
+    # 'Food Name': ["Apple", "Banana", "Carrot", "Pear"],
+    # 'Nutritional Value': [10, 20, 30, 40],
+    # 'GI Value': [50, 60, 40, 30],
+    # 'Carbohydrate Content': [15, 20, 10, 5],
+    # 'Price': [5, 10, 8, 7]
+    'Food Name': ["Apple", "Banana"],
+    'Nutritional Value': [20, 10],
+    'GI Value': [50, 60],
+    'Carbohydrate Content': [15, 20],
+    'Price': [5, 10]
 })
 
 with gr.Blocks() as demo:
@@ -107,8 +109,8 @@ with gr.Blocks() as demo:
         food_data_display = gr.DataFrame(value=food_data, label="Food Items")
 
     with gr.Tab("Optimize Menu"):
-        gl_limit = gr.Number(label="GL Limit", value=50)
-        budget_limit = gr.Number(label="Budget Limit", value=30)
+        gl_limit = gr.Number(label="GL Limit", value=12)
+        budget_limit = gr.Number(label="Budget Limit", value=15)
         optimize_button = gr.Button("Optimize")
         result_text = gr.Textbox(label="Result")
         selected_foods_display = gr.DataFrame(label="Selected Food Items")
@@ -141,4 +143,24 @@ with gr.Blocks() as demo:
         outputs=[result_text, selected_foods_display]
     )
 
-demo.launch(server_name="0.0.0.0", server_port=80)
+demo.launch(server_name="0.0.0.0", server_port=8080)
+
+
+
+
+
+
+# food_data = pd.DataFrame({
+#     'Food Name': ["Apple", "Banana"],
+#     'Nutritional aVlue': [20, 10],
+#     GI_value = [50, 60]
+#     gl = [75, 120]
+#     'Price': [5, 10]
+# })
+
+# budget = 15
+# gl_limit = 12
+
+# expect apple, value = 20
+
+# budget 
