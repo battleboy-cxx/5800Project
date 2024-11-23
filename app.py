@@ -47,10 +47,11 @@ def optimize_menu(food_data, gl_limit, budget_limit):
     values = food_data['Nutritional Value'].tolist()
     gis = food_data['GI Value'].tolist()
     chos = food_data['Carbohydrate Content'].tolist()
-    prices = food_data['Price'].tolist()
+    # Multiply 'Price' by 10 and round to integer
+    prices = (food_data['Price']*10).round().astype(int).tolist()
 
     max_value, selected_indices = maximize_nutritional_value_dp(
-        values, gis, chos, prices, gl_limit, budget_limit
+        values, gis, chos, prices, gl_limit, budget_limit*10
     )
 
     selected_foods = food_data.iloc[selected_indices]
@@ -74,19 +75,35 @@ def delete_food_items(food_data, items_to_delete):
     updated_food_data = food_data[~food_data['Food Name'].isin(items_to_delete)].reset_index(drop=True)
     return updated_food_data
 
+# Read the data into a DataFrame
+df = pd.read_csv('data_raw.csv')
+
+# Select and rename the required columns
+food_data = df[['Food', 'Protein(g)', 'GI (Glycemic Index)', 'CHO (carbohydrates, g)', 'total price']].copy()
+food_data.rename(columns={
+    'Food': 'Food Name',
+    'Protein(g)': 'Nutritional Value',
+    'GI (Glycemic Index)': 'GI Value',
+    'CHO (carbohydrates, g)': 'Carbohydrate Content',
+    'total price': 'Price'
+}, inplace=True)
+
+# # Multiply 'Price' by 10 and round to integer
+# food_data['Price'] = (food_data['Price'] * 10).round().astype(int)
+
 # Initial food data
-food_data = pd.DataFrame({
-    # 'Food Name': ["Apple", "Banana", "Carrot", "Pear"],
-    # 'Nutritional Value': [10, 20, 30, 40],
-    # 'GI Value': [50, 60, 40, 30],
-    # 'Carbohydrate Content': [15, 20, 10, 5],
-    # 'Price': [5, 10, 8, 7]
-    'Food Name': ["Apple", "Banana"],
-    'Nutritional Value': [20, 10],
-    'GI Value': [50, 60],
-    'Carbohydrate Content': [15, 20],
-    'Price': [5, 10]
-})
+# food_data = pd.DataFrame({
+#     # 'Food Name': ["Apple", "Banana", "Carrot", "Pear"],
+#     # 'Nutritional Value': [10, 20, 30, 40],
+#     # 'GI Value': [50, 60, 40, 30],
+#     # 'Carbohydrate Content': [15, 20, 10, 5],
+#     # 'Price': [5, 10, 8, 7]
+#     'Food Name': ["Apple", "Banana"],
+#     'Nutritional Value': [20, 10],
+#     'GI Value': [50, 60],
+#     'Carbohydrate Content': [15, 20],
+#     'Price': [5, 10]
+# })
 
 with gr.Blocks() as demo:
     gr.Markdown("# Nutritional Menu Optimizer")
